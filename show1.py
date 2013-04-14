@@ -95,7 +95,3 @@ elif state == STATE_PERSON_RUNNING:
         error()
     else:
         error()
-    
-        
-# states: start, landscape running, landscape stopping, person running, person stopping
-# events: landscape finished, incoming 
