@@ -1,0 +1,6 @@
+#!/bin/bash
+
+OMXPLAYER_BIN="/usr/bin/omxplayer.bin"
+OMXPLAYER_LIBS="/opt/vc/lib:/usr/lib/omxplayer"
+
+LD_LIBRARY_PATH=$OMXPLAYER_LIBS:$LD_LIBRARY_PATH exec $OMXPLAYER_BIN "$@"
