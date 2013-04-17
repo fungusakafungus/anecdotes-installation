@@ -2,5 +2,8 @@
 
 OMXPLAYER_BIN="/usr/bin/omxplayer.bin"
 OMXPLAYER_LIBS="/opt/vc/lib:/usr/lib/omxplayer"
-
-LD_LIBRARY_PATH=$OMXPLAYER_LIBS:$LD_LIBRARY_PATH exec $OMXPLAYER_BIN "$@"
+if [ -f $OMXPLAYER_BIN ]; then
+     LD_LIBRARY_PATH=$OMXPLAYER_LIBS:$LD_LIBRARY_PATH exec $OMXPLAYER_BIN "$@"
+else
+    /Applications/UTILS_NOiNSTALLER/MPlayer\ OSX.app/Contents/Resources/External_Binaries/mplayer.app/Contents/MacOS/mplayer -really-quiet "$@"
+fi
