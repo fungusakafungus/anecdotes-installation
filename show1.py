@@ -96,6 +96,7 @@ while True:
         state = STATE_LANDSCAPE_RUNNING
     if not event:
         continue
+    # TODO: if person video is running, do not start next landscape video
     elif state == STATE_LANDSCAPE_RUNNING:
         if event == EVENT_FINISHED:
             start_next_landscape()
