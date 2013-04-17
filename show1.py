@@ -68,7 +68,7 @@ def error():
 
 while True:
     # TODO: check, if interrupt ends the program when in sleep()
-    time.sleep(1)
+    time.sleep(0.1)
     event = None
     current_time = time.time()
     if person_started and current_time - person_started > START_TIMEOUT:
@@ -88,8 +88,8 @@ while True:
         event = EVENT_FINISHED
         landscape_process = None
     
-    print "event: ", event
-    print "state: ", state
+    #print "event: ", event
+    #print "state: ", state
     if state == STATE_START:
         start_next_landscape()
         print "lanscape process when starting:", landscape_process
