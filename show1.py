@@ -26,10 +26,12 @@ def start_video(filename):
     return subprocess.Popen([PLAYER, filename], stdin=subprocess.PIPE)
 
 def start_next_landscape():
+    global landscapefile, personfile, landscape_process
     landscapefile, personfile = videofiles.next()
     landscape_process = start_video(landscapefile)
     
 def start_person():
+    global person_process, person_started
     person_process = start_video(personfile)
     person_started = time.time()
 
