@@ -77,10 +77,10 @@ while True:
         else:
             event = EVENT_OUTGOING
     last_sensor_state = new_sensor_state
-    if person_process and (person_process.poll() == 0):
+    if person_process and (person_process.poll() is not None):
         event = EVENT_FINISHED
         person_process = None
-    if landscape_process and (landscape_process.poll() == 0):
+    if landscape_process and (landscape_process.poll() is not None):
         event = EVENT_FINISHED
         landscape_process = None
     
