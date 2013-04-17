@@ -62,13 +62,14 @@ def kill_landscape():
 def error():
     print "Unexpected state: %s, event: %s" % (state, event)
 
+
 while True:
     time.sleep(1)
     event = None
     current_time = time.time()
     if person_started and current_time - person_started > START_TIMEOUT:
         event = EVENT_TIMEOUT
-	person_started = None
+    person_started = None
     new_sensor_state = sensor.state()
     if last_sensor_state != new_sensor_state:
         if new_sensor_state == True:
@@ -76,19 +77,21 @@ while True:
         else:
             event = EVENT_OUTGOING
     last_sensor_state = new_sensor_state
-    if person_process and person_process.poll():
-	event = EVENT_FINISHED
-	person_process = None
-    if landscape_process and landscape_process.poll():
-	event = EVENT_FINISHED
-	landscape_process = None
-        
+    if person_process and (person_process.poll() == 0):
+        event = EVENT_FINISHED
+        person_process = None
+    if landscape_process and (landscape_process.poll() == 0):
+        event = EVENT_FINISHED
+        landscape_process = None
+    
     print "event: ", event
     print "state: ", state
     if state == STATE_START:
         start_next_landscape()
         print "lanscape process when starting:", landscape_process
         state = STATE_LANDSCAPE_RUNNING
+    if not event:
+        continue
     elif state == STATE_LANDSCAPE_RUNNING:
         if event == EVENT_FINISHED:
             start_next_landscape()
