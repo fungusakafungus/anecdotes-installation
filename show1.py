@@ -41,6 +41,9 @@ person_started = None
 last_sensor_state = None
 person_process = None
 landscape_process = None
+landscapefile = None
+personfile = None
+
 state = STATE_START
 
 
@@ -48,7 +51,7 @@ def start_video(filename):
     return subprocess.Popen([PLAYER, filename], stdin=subprocess.PIPE)
 
 def start_next_landscape():
-    global landscape_process
+    global landscapefile, personfile, landscape_process
     landscapefile, personfile = videofiles.next()
     landscape_process = start_video(landscapefile)
     
@@ -64,6 +67,7 @@ def error():
 
 
 while True:
+    # TODO: check, if interrupt ends the program when in sleep()
     time.sleep(1)
     event = None
     current_time = time.time()
