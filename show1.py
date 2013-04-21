@@ -19,9 +19,6 @@ EVENT_TIMEOUT = "EVENT_TIMEOUT"
 
 START_TIMEOUT = 2.7
 
-
-
-
 MY_PATH = os.path.dirname(__file__)
 PLAYER = MY_PATH + "/omxplayer-simple"
 VIDEO_PATH = MY_PATH + "/videos"
@@ -29,14 +26,8 @@ landscapes = glob.glob(VIDEO_PATH + "/L*")
 persons = glob.glob(VIDEO_PATH + "/P*")
 videofiles = zip(landscapes, persons)
 videofiles = itertools.cycle(videofiles)
-print videofiles.next()
-print videofiles.next()
-print videofiles.next()
-print videofiles.next()
 
-
-
-# here we will define so variables in the global scope which are used in the functions
+# here we will define the variables in the global scope which are used in functions
 person_started = None
 last_sensor_state = None
 person_process = None
@@ -48,6 +39,7 @@ state = STATE_START
 
 
 def start_video(filename):
+    print "starting", filename
     return subprocess.Popen([PLAYER, filename], stdin=subprocess.PIPE)
 
 def start_next_landscape():
@@ -56,11 +48,16 @@ def start_next_landscape():
     landscape_process = start_video(landscapefile)
     
 def start_person():
+    global person_process, person_started
     person_process = start_video(personfile)
     person_started = time.time()
 
 def kill_landscape():
-    landscape_process.kill()
+    global landscape_process
+    if landscape_process:
+        print "killing", landscape_process
+        landscape_process.kill()
+    landscape_process = None
     
 def error():
     print "Unexpected state: %s, event: %s" % (state, event)
@@ -73,7 +70,7 @@ while True:
     current_time = time.time()
     if person_started and current_time - person_started > START_TIMEOUT:
         event = EVENT_TIMEOUT
-    person_started = None
+        person_started = None
     new_sensor_state = sensor.state()
     if last_sensor_state != new_sensor_state:
         if new_sensor_state == True:
@@ -88,16 +85,15 @@ while True:
         event = EVENT_FINISHED
         landscape_process = None
     
-    #print "event: ", event
-    #print "state: ", state
-    if state == STATE_START:
+    if state == STATE_START and event != EVENT_INCOMING:
         start_next_landscape()
-        print "lanscape process when starting:", landscape_process
         state = STATE_LANDSCAPE_RUNNING
     if not event:
         continue
+    print "event: ", event
+    print "state: ", state
     # TODO: if person video is running, do not start next landscape video
-    elif state == STATE_LANDSCAPE_RUNNING:
+    if state == STATE_LANDSCAPE_RUNNING:
         if event == EVENT_FINISHED:
             start_next_landscape()
             state = STATE_LANDSCAPE_RUNNING
@@ -112,8 +108,9 @@ while True:
             error()
     elif state == STATE_PERSON_STARTING:
         if event == EVENT_FINISHED:
-            start_next_landscape()
-            state = STATE_LANDSCAPE_RUNNING
+            # person video was started just before the lanscape video finished
+            # don't do anything
+            pass
         elif event == EVENT_INCOMING:
             state = STATE_PERSON_STARTING
         elif event == EVENT_OUTGOING:
@@ -131,8 +128,9 @@ while True:
         elif event == EVENT_INCOMING:
             state = STATE_PERSON_RUNNING
         elif event == EVENT_OUTGOING:
-            start_next_landscape()
-            state = STATE_LANDSCAPE_RUNNING
+            # if the viewer leaves during person video running, do nothing and
+            # let the person video finish
+            pass
         elif event == EVENT_TIMEOUT:
             error()
         else:
