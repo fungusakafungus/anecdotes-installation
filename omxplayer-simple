@@ -1,10 +1,17 @@
 #!/bin/bash
+# vim: ts=4:sw=4:expandtab
 
 OMXPLAYER_BIN="/usr/bin/omxplayer.bin"
 OMXPLAYER_LIBS="/opt/vc/lib:/usr/lib/omxplayer"
 if [ -f $OMXPLAYER_BIN ]; then
      LD_LIBRARY_PATH=$OMXPLAYER_LIBS:$LD_LIBRARY_PATH exec $OMXPLAYER_BIN "$@"
 else
+    if [ -f /usr/bin/mplayer ]
+    then
+        PLAYER=mplayer
+    else
+        PLAYER=/Applications/UTILS_NOiNSTALLER/MPlayer\ OSX.app/Contents/Resources/External_Binaries/mplayer.app/Contents/MacOS/mplayer
+    fi
     sleep 2.7
-    /Applications/UTILS_NOiNSTALLER/MPlayer\ OSX.app/Contents/Resources/External_Binaries/mplayer.app/Contents/MacOS/mplayer -really-quiet "$@"
+    exec $PLAYER -osdlevel 2 -vo sdl -nolirc -really-quiet "$@"
 fi
