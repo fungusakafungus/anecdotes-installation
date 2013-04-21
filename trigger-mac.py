@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 f = open("/tmp/trigger", "r")
 contents = f.read()
 if "incoming" in contents:
