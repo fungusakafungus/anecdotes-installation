@@ -19,9 +19,6 @@ EVENT_TIMEOUT = "EVENT_TIMEOUT"
 
 START_TIMEOUT = 2.7
 
-
-
-
 MY_PATH = os.path.dirname(__file__)
 PLAYER = MY_PATH + "/omxplayer-simple"
 VIDEO_PATH = MY_PATH + "/videos"
@@ -29,12 +26,6 @@ landscapes = glob.glob(VIDEO_PATH + "/L*")
 persons = glob.glob(VIDEO_PATH + "/P*")
 videofiles = zip(landscapes, persons)
 videofiles = itertools.cycle(videofiles)
-print videofiles.next()
-print videofiles.next()
-print videofiles.next()
-print videofiles.next()
-
-
 
 # here we will define so variables in the global scope which are used in the functions
 person_started = None
@@ -93,7 +84,6 @@ while True:
     #print "state: ", state
     if state == STATE_START:
         start_next_landscape()
-        print "lanscape process when starting:", landscape_process
         state = STATE_LANDSCAPE_RUNNING
     if not event:
         continue
