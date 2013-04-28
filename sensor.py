@@ -19,6 +19,8 @@ def state():
     global last_state
     if GPIO:
         distance = ultrasonic.distance()
+        if not distance:
+            return last_state
         if last_state == INCOMING and distance > MAX_DISTANCE:
             last_state = OUTGOING
             return OUTGOING

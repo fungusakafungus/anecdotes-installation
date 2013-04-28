@@ -24,6 +24,7 @@ GPIO_ECHO = 24
 print "Ultrasonic Measurement"
 
 def distance():
+    reset = time.time()
     # Set pins as output and input
     GPIO.setup(GPIO_TRIGGER,GPIO.OUT)  # Trigger
     GPIO.setup(GPIO_ECHO,GPIO.IN)      # Echo
@@ -42,11 +43,15 @@ def distance():
     start = time.time()
     print "waiting for GPIO_ECHO to become 1"
     while GPIO.input(GPIO_ECHO)==0:
+        if start > reset + 1:
+            return None
         start = time.time()
 
     stop = time.time()
     print "waiting for GPIO_ECHO to become 0"
     while GPIO.input(GPIO_ECHO)==1:
+        if stop > reset + 1:
+            return None
         stop = time.time()
 
     # Calculate pulse length
