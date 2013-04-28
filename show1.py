@@ -62,7 +62,6 @@ try:
         last_sensor_state = new_sensor_state
 
         new_player_state = GaplessPlayer.is_stopped()
-        print "player_state: ", new_player_state
         if last_player_state != new_player_state:
             print "player_state changed: ", new_player_state
             if new_player_state == False:
