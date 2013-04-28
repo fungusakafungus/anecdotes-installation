@@ -1,0 +1,9 @@
+#!/bin/bash
+#exec >/home/pi/log 2>/home/pi/log2
+#set -x
+#t=$(pgrep -fl "$0" | grep -v $$)
+#[ -n "$t" ] && exit
+
+cd /home/pi/show
+git pull
+sudo ./show1.py
