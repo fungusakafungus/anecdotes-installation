@@ -43,6 +43,10 @@ class GaplessPlayer(object):
             cls.schedule_kill()
 
     @classmethod
+    def is_stopped(cls):
+        return cls.process and (cls.process.poll() is not None)
+
+    @classmethod
     def quit(cls):
         cls.running = False
         killer.join()

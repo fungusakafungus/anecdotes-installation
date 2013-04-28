@@ -15,6 +15,7 @@ STATE_PERSON_RUNNING = "STATE_PERSON_RUNNING"
 
 EVENT_INCOMING = "EVENT_INCOMING"
 EVENT_OUTGOING = "EVENT_OUTGOING"
+EVENT_FINISHED = "EVENT_FINISHED"
 
 MY_PATH = os.path.dirname(__file__)
 PLAYER = MY_PATH + "/omxplayer-simple"
@@ -27,6 +28,7 @@ videofiles = itertools.cycle(videofiles)
 # here we will define the variables in the global scope which are used in functions
 person_started = None
 last_sensor_state = None
+last_player_state = None
 landscapefile = None
 personfile = None
 
@@ -59,6 +61,17 @@ try:
                 event = EVENT_OUTGOING
         last_sensor_state = new_sensor_state
 
+        new_player_state = GaplessPlayer.is_stopped()
+        print "player_state: ", new_player_state
+        if last_player_state != new_player_state:
+            print "player_state changed: ", new_player_state
+            if new_player_state == False:
+                pass
+            else:
+                print "player_state finished: ", new_player_state
+                event = EVENT_FINISHED
+        last_player_state = new_player_state
+
         if state == STATE_START and event != EVENT_INCOMING:
             start_next_landscape()
             state = STATE_LANDSCAPE_RUNNING
@@ -73,12 +86,18 @@ try:
                 state = STATE_PERSON_RUNNING
             elif event == EVENT_OUTGOING:
                 pass
+            elif event == EVENT_FINISHED:
+                start_next_landscape()
+                state = STATE_LANDSCAPE_RUNNING
             else:
                 error()
         elif state == STATE_PERSON_RUNNING:
             if event == EVENT_INCOMING:
                 pass
             elif event == EVENT_OUTGOING:
+                start_next_landscape()
+                state = STATE_LANDSCAPE_RUNNING
+            elif event == EVENT_FINISHED:
                 start_next_landscape()
                 state = STATE_LANDSCAPE_RUNNING
             else:
