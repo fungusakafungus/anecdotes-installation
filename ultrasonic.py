@@ -23,37 +23,30 @@ GPIO_ECHO = 24
 
 print "Ultrasonic Measurement"
 
-# Set pins as output and input
-GPIO.setup(GPIO_TRIGGER,GPIO.OUT)  # Trigger
-GPIO.setup(GPIO_ECHO,GPIO.IN)      # Echo
+def distance():
+    # Set pins as output and input
+    GPIO.setup(GPIO_TRIGGER,GPIO.OUT)  # Trigger
+    GPIO.setup(GPIO_ECHO,GPIO.IN)      # Echo
 
-# Set trigger to False (Low)
-GPIO.output(GPIO_TRIGGER, False)
+    # Set trigger to False (Low)
+    GPIO.output(GPIO_TRIGGER, False)
 
-# Allow module to settle
-time.sleep(0.5)
+    # Allow module to settle
+    time.sleep(0.1)
 
-def measure_distance():
-    time.sleep(0.5)
-    reset = time.time()
     # Send 10us pulse to trigger
     print "Send 10us pulse to trigger"
     GPIO.output(GPIO_TRIGGER, True)
     time.sleep(0.00001)
-    #time.sleep(0.0001)
     GPIO.output(GPIO_TRIGGER, False)
     start = time.time()
     print "waiting for GPIO_ECHO to become 1"
     while GPIO.input(GPIO_ECHO)==0:
-        if start > reset + 1.0:
-            return
         start = time.time()
 
     stop = time.time()
     print "waiting for GPIO_ECHO to become 0"
     while GPIO.input(GPIO_ECHO)==1:
-        if stop > reset + 3.0:
-            return
         stop = time.time()
 
     # Calculate pulse length
@@ -67,10 +60,6 @@ def measure_distance():
     distance = distance / 2
 
     print "Distance : %.1f" % distance
+    return distance
 
-try:
-    while True:
-        measure_distance()
-except KeyboardInterrupt:
-    # Reset GPIO settings
-    GPIO.cleanup()
+GPIO.cleanup()
