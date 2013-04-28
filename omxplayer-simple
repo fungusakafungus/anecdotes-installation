@@ -13,9 +13,10 @@ else
     else
         PLAYER=/Applications/UTILS_NOiNSTALLER/MPlayer\ OSX.app/Contents/Resources/External_Binaries/mplayer.app/Contents/MacOS/mplayer
     fi
-    echo preparing to play "$@"
+    #echo preparing to play "$@"
     sleep 2.7
-    echo starting "$@"
-    echo exec "$PLAYER" -osdlevel 2 -vo sdl -nolirc -really-quiet "$@"
-    exec "$PLAYER" -osdlevel 2 $OPTIONS -nolirc -really-quiet "$@"
+    #echo starting "$@"
+    #echo exec "$PLAYER" -osdlevel 2 -vo sdl -nolirc -really-quiet "$@"
+    exec >/dev/null 2>&1
+    exec "$PLAYER" -osdlevel 2 $OPTIONS -nolirc -really-quiet "$@" >/dev/null 2>&1
 fi

@@ -21,36 +21,43 @@ GPIO.setmode(GPIO.BCM)
 GPIO_TRIGGER = 23
 GPIO_ECHO = 24
 
-print "Ultrasonic Measurement"
+# Set pins as output and input
+GPIO.setup(GPIO_TRIGGER,GPIO.OUT)  # Trigger
+GPIO.setup(GPIO_ECHO,GPIO.IN)      # Echo
 
+# Set trigger to False (Low)
+GPIO.output(GPIO_TRIGGER, False)
+
+# Allow module to settle
+time.sleep(0.5)
+
+reset = 0
 def distance():
+    global reset
+
+    if time.time() - reset < 0.06:
+        return None
     reset = time.time()
-    # Set pins as output and input
-    GPIO.setup(GPIO_TRIGGER,GPIO.OUT)  # Trigger
-    GPIO.setup(GPIO_ECHO,GPIO.IN)      # Echo
-
-    # Set trigger to False (Low)
-    GPIO.output(GPIO_TRIGGER, False)
-
-    # Allow module to settle
-    time.sleep(0.1)
 
     # Send 10us pulse to trigger
-    print "Send 10us pulse to trigger"
+    #print "Send 10us pulse to trigger"
     GPIO.output(GPIO_TRIGGER, True)
     time.sleep(0.00001)
     GPIO.output(GPIO_TRIGGER, False)
     start = time.time()
-    print "waiting for GPIO_ECHO to become 1"
-    while GPIO.input(GPIO_ECHO)==0:
-        if start > reset + 1:
-            return None
-        start = time.time()
+    #print "waiting for GPIO_ECHO to become 1"
+    if GPIO.input(GPIO_ECHO)==0:
+        while GPIO.input(GPIO_ECHO)==0:
+            if start > reset + 1:
+                print "timeout waiting for GPIO_ECHO to become 1"
+                return None
+            start = time.time()
 
     stop = time.time()
-    print "waiting for GPIO_ECHO to become 0"
+    #print "waiting for GPIO_ECHO to become 0"
     while GPIO.input(GPIO_ECHO)==1:
         if stop > reset + 1:
+            print "timeout waiting for GPIO_ECHO to become 0"
             return None
         stop = time.time()
 
@@ -64,7 +71,11 @@ def distance():
     # That was the distance there and back so halve the value
     distance = distance / 2
 
-    print "Distance : %.1f" % distance
+    #print "Distance : %.1f" % distance
+
+    # Set trigger to False (Low)
+    GPIO.output(GPIO_TRIGGER, False)
     return distance
 
-GPIO.cleanup()
+def quit():
+    GPIO.cleanup()

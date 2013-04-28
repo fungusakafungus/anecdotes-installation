@@ -1,3 +1,4 @@
+import sys
 try:
     import RPi.GPIO as GPIO
     import ultrasonic
@@ -21,6 +22,8 @@ def state():
         distance = ultrasonic.distance()
         if not distance:
             return last_state
+        sys.stdout.write("\r%d" % int(distance))
+        sys.stdout.flush()
         if last_state == INCOMING and distance > MAX_DISTANCE:
             last_state = OUTGOING
             return OUTGOING

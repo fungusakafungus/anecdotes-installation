@@ -4,6 +4,7 @@ import time
 import itertools
 import glob
 import sensor
+import ultrasonic
 import os
 
 from gapless_player import GaplessPlayer
@@ -102,4 +103,5 @@ try:
             else:
                 error()
 except:
+    ultrasonic.quit()
     GaplessPlayer.quit()
