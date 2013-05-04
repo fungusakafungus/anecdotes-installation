@@ -14,3 +14,4 @@ TODO
  - do we need debugging information, and when, where to show it
   - probably not, in the end it should just work!
  - we need black screen between videos, so we better do not start graphical environment
+ - how to clone the sd cards
