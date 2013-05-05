@@ -5,5 +5,5 @@
 #[ -n "$t" ] && exit
 
 cd /home/pi/show
-git pull
-sudo ./show1.py
+git pull &>/dev/null
+sudo ./show1.py &>/dev/null
