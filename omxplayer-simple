@@ -4,7 +4,7 @@
 OMXPLAYER_BIN="/usr/bin/omxplayer.bin"
 OMXPLAYER_LIBS="/opt/vc/lib:/usr/lib/omxplayer"
 if [ -f $OMXPLAYER_BIN ]; then
-     LD_LIBRARY_PATH=$OMXPLAYER_LIBS:$LD_LIBRARY_PATH exec $OMXPLAYER_BIN "$@"
+     LD_LIBRARY_PATH=$OMXPLAYER_LIBS:$LD_LIBRARY_PATH exec $OMXPLAYER_BIN --video_fifo 1 --audio_fifo 1 "$@"
 else
     if [ -f /usr/bin/mplayer ]
     then
