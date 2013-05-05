@@ -4,6 +4,24 @@ Landscape videos should be named L&lt;number>_&lt;something>.mov
     
 Person videos should be named P&lt;number>_&lt;something>.mov 
 
+To have blank screen after boot:
+
+Edit /etc/inittab:
+
+Change this:
+
+    1:2345:respawn:/sbin/getty --noclear 38400 tty1 
+
+to this:
+
+    1:2345:off:/sbin/getty --noclear 38400 tty1 
+
+Edit /etc/rc.local, add the following before `exit 0`
+
+    sudo -u pi /home/pi/show/start &
+    setterm -blank force
+
+
 TODO
 ----
 
