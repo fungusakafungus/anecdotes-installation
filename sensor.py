@@ -1,4 +1,7 @@
 import sys
+import os
+from ConfigParser import ConfigParser
+
 try:
     import RPi.GPIO as GPIO
     import ultrasonic
@@ -9,10 +12,15 @@ except ImportError:
     import getch
     print "looks like we are not running on a raspberry pi!"
 
+MY_PATH = os.path.dirname(__file__)
+config = ConfigParser()
+config.readfp(open(MY_PATH + '/config-default.ini'))
+config.read(MY_PATH + "/config.ini")
+
 OUTGOING = False
 INCOMING = True
-MIN_DISTANCE = 20
-MAX_DISTANCE = 80
+MIN_DISTANCE = config.getint("anecdotes", "min_distance")
+MAX_DISTANCE = config.getint("anecdotes", "max_distance")
 
 last_state = OUTGOING
 

@@ -1,0 +1,13 @@
+service VNC_0
+{
+	disable         = no
+	type            = UNLISTED
+	socket_type     = stream
+	protocol        = tcp
+	port            = 5900
+	user            = pi
+	server          = /usr/bin/Xvnc
+	server_args     = Xvnc -inetd -query localhost -once -geometry 1024x768 -depth 16 -rfbauth /home/pi/.vnc/passwd -alwaysshared
+	wait            = no
+}
+# /usr/bin/Xvnc Xvnc -inetd -query localhost -once -geometry 1024x768 -depth 16

@@ -7,7 +7,7 @@ import sensor
 import ultrasonic
 import os
 
-from gapless_player import GaplessPlayer
+import gapless_player
 
 # here we will define some constants
 STATE_START = "STATE_START"
@@ -37,7 +37,7 @@ state = STATE_START
 
 def start_video(filename):
     print "starting", filename
-    GaplessPlayer.play(filename)
+    gapless_player.play(filename)
 
 def start_next_landscape():
     global landscapefile, personfile
@@ -62,7 +62,7 @@ try:
                 event = EVENT_OUTGOING
         last_sensor_state = new_sensor_state
 
-        new_player_state = GaplessPlayer.is_stopped()
+        new_player_state = gapless_player.is_stopped()
         if last_player_state != new_player_state:
             print "player_state changed: ", new_player_state
             if new_player_state == False:
@@ -104,4 +104,4 @@ try:
                 error()
 except:
     ultrasonic.quit()
-    GaplessPlayer.quit()
+    gapless_player.quit()
