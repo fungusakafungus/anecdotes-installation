@@ -35,9 +35,10 @@ reset = 0
 def distance():
     global reset
 
-    if time.time() - reset < 0.06:
+    current_time = time.time()
+    if current_time - reset < 0.06:
         return None
-    reset = time.time()
+    reset = current_time
 
     # Send 10us pulse to trigger
     #print "Send 10us pulse to trigger"

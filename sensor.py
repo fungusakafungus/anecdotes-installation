@@ -1,6 +1,8 @@
+from __future__ import division
 import sys
 import os
 from ConfigParser import ConfigParser
+import collections
 
 try:
     import RPi.GPIO as GPIO
@@ -21,8 +23,10 @@ OUTGOING = False
 INCOMING = True
 MIN_DISTANCE = config.getint("anecdotes", "min_distance")
 MAX_DISTANCE = config.getint("anecdotes", "max_distance")
+WINDOW_SIZE = 5
 
 last_state = OUTGOING
+distances = collections.deque(maxlen=5)
 
 def state():
     global last_state
@@ -30,6 +34,8 @@ def state():
         distance = ultrasonic.distance()
         if not distance:
             return last_state
+        distances.append(distance)
+        distance = sum(distances) / len(distances)
         sys.stdout.write("\r%d" % int(distance))
         sys.stdout.flush()
         if last_state == INCOMING and distance > MAX_DISTANCE:

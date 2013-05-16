@@ -8,15 +8,16 @@ import logging
 #PLAYER = MY_PATH + "/omxplayer-simple"
 PLAYER = './omxplayer-simple'
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.WARNING)
 
 def start_video(filename):
-    logging.debug("starting %s", filename)
-    return subprocess.Popen([PLAYER, filename], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+    process = subprocess.Popen([PLAYER, filename], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+    logging.debug("started %s: %s", filename, process)
+    return process
 
 old_process = None
 process = None
-start_delay = 0.4
+start_delay = 0.8
 check_every = 0.1
 running = True
 lock = threading.RLock()
@@ -29,8 +30,9 @@ def lurk():
             if old_process and old_process.poll() is None:
                 current_time = time.time()
                 if current_time >= time_to_die:
-                    logging.debug("lurk: killing old_process")
-                    old_process.kill()
+                    logging.debug("lurk: killing old_process %s", old_process)
+                    #old_process.communicate(input='q')
+                    old_process.terminate()
                     old_process = None
 
 
@@ -43,11 +45,12 @@ def play(videofile):
     global old_process, process
     with lock:
         if not old_process:
-            logging.debug("not killing old_process")
+            logging.debug("no old_process")
         else:
-            logging.debug("play: killing old_process")
+            logging.debug("play: killing old_process %s", old_process)
             try:
-                old_process.kill()
+                #old_process.communicate(input='q')
+                old_process.terminate()
             except OSError:
                 logging.debug("could not kill old_process, already dead?")
         old_process = process
