@@ -21,8 +21,8 @@ EVENT_FINISHED = "EVENT_FINISHED"
 MY_PATH = os.path.dirname(__file__)
 PLAYER = MY_PATH + "/omxplayer-simple"
 VIDEO_PATH = MY_PATH + "/videos"
-landscapes = glob.glob(VIDEO_PATH + "/L*")
-persons = glob.glob(VIDEO_PATH + "/P*")
+landscapes = sorted(glob.glob(VIDEO_PATH + "/L*"))
+persons = sorted(glob.glob(VIDEO_PATH + "/P*"))
 videofiles = zip(landscapes, persons)
 videofiles = itertools.cycle(videofiles)
 
