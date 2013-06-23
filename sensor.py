@@ -16,7 +16,9 @@ except ImportError:
 
 MY_PATH = os.path.dirname(__file__)
 config = ConfigParser()
+# we require config-default.ini to be there. open() will show an error otherwise
 config.readfp(open(MY_PATH + '/config-default.ini'))
+# config.ini may be absent
 config.read(MY_PATH + "/config.ini")
 
 OUTGOING = False
@@ -26,7 +28,7 @@ MAX_DISTANCE = config.getint("anecdotes", "max_distance")
 WINDOW_SIZE = 5
 
 last_state = OUTGOING
-distances = collections.deque(maxlen=5)
+distances = collections.deque(maxlen=WINDOW_SIZE)
 
 def state():
     global last_state
