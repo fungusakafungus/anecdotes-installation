@@ -1,12 +1,14 @@
 #!/usr/bin/env python
+# standard python modules
 import subprocess
 import time
 import itertools
 import glob
-import sensor
-import ultrasonic
 import os
 
+# our python modules
+import sensor
+import ultrasonic
 import gapless_player
 
 # here we will define some constants
@@ -21,8 +23,12 @@ EVENT_FINISHED = "EVENT_FINISHED"
 MY_PATH = os.path.dirname(__file__)
 PLAYER = MY_PATH + "/omxplayer-simple"
 VIDEO_PATH = MY_PATH + "/videos"
+
+# here we are loading the videos
 landscapes = sorted(glob.glob(VIDEO_PATH + "/L*"))
 persons = sorted(glob.glob(VIDEO_PATH + "/P*"))
+
+# now we are making pairs of (landscape video, person video)
 videofiles = zip(landscapes, persons)
 videofiles = itertools.cycle(videofiles)
 
@@ -51,9 +57,13 @@ def error():
     print "Unexpected state: %s, event: %s" % (state, event)
 
 try:
+    # now we will start an event loop
     while True:
+        # wait a little so we dont use too much of the processor power
         time.sleep(0.1)
         event = None
+        
+        # here we are inspecting the state of the sensor
         new_sensor_state = sensor.state()
         if last_sensor_state != new_sensor_state:
             if new_sensor_state == True:
@@ -62,20 +72,22 @@ try:
                 event = EVENT_OUTGOING
         last_sensor_state = new_sensor_state
 
+        # and now almost the same for the state of the player
         new_player_state = gapless_player.is_stopped()
         if last_player_state != new_player_state:
             print "player_state changed: ", new_player_state
-            if new_player_state == False:
-                pass
-            else:
+            if new_player_state == True:
                 print "player_state finished: ", new_player_state
                 event = EVENT_FINISHED
         last_player_state = new_player_state
 
+        # state machine code starts here
+        # we first see if we are in the START state
         if state == STATE_START and event != EVENT_INCOMING:
             start_next_landscape()
             state = STATE_LANDSCAPE_RUNNING
         if not event:
+            # if there is no event to process, go back to the beginning of the loop
             continue
         print "event: ", event
         print "state: ", state
