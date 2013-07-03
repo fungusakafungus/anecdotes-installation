@@ -1,14 +1,15 @@
 #!/usr/bin/env python
-# standard python modules
 import subprocess
 import time
 import itertools
 import glob
-import os
-
-# our python modules
 import sensor
 import ultrasonic
+import os
+from ConfigParser import ConfigParser
+import logging
+import logging.handlers
+
 import gapless_player
 
 # here we will define some constants
@@ -23,12 +24,8 @@ EVENT_FINISHED = "EVENT_FINISHED"
 MY_PATH = os.path.dirname(__file__)
 PLAYER = MY_PATH + "/omxplayer-simple"
 VIDEO_PATH = MY_PATH + "/videos"
-
-# here we are loading the videos
 landscapes = sorted(glob.glob(VIDEO_PATH + "/L*"))
 persons = sorted(glob.glob(VIDEO_PATH + "/P*"))
-
-# now we are making pairs of (landscape video, person video)
 videofiles = zip(landscapes, persons)
 videofiles = itertools.cycle(videofiles)
 
@@ -42,7 +39,7 @@ personfile = None
 state = STATE_START
 
 def start_video(filename):
-    print "starting", filename
+    logger.info("starting %s", filename)
     gapless_player.play(filename)
 
 def start_next_landscape():
@@ -54,16 +51,35 @@ def start_person():
     start_video(personfile)
 
 def error():
-    print "Unexpected state: %s, event: %s" % (state, event)
+    logger.error("Unexpected state: %s, event: %s", state, event)
+
+def read_config():
+    config = ConfigParser()
+    config.readfp(open(MY_PATH + '/config-default.ini'))
+    config.read(MY_PATH + "/config.ini")
+    return config
+
+def configure_logging():
+    config = read_config()
+    logger = logging.getLogger()
+    logger.level = logging.DEBUG
+    syslog_host = config.get("anecdotes", "syslog_host")
+    handler = logging.handlers.SysLogHandler(address=(syslog_host, 514), facility=logging.handlers.SysLogHandler.LOG_LOCAL0)
+    formatter = logging.Formatter('%(asctime)s %(name)s: %(levelname)s %(message)s', '%b %e %H:%M:%S')
+    handler.setFormatter(formatter)
+
+    logger.addHandler(handler)
+    return logger
+
+# configure logging
+logger = configure_logging()
 
 try:
-    # now we will start an event loop
     while True:
-        # wait a little so we dont use too much of the processor power
         time.sleep(0.1)
+        # re-read the distance config (config.ini) to make tuning easier
+        sensor.read_config()
         event = None
-        
-        # here we are inspecting the state of the sensor
         new_sensor_state = sensor.state()
         if last_sensor_state != new_sensor_state:
             if new_sensor_state == True:
@@ -72,25 +88,23 @@ try:
                 event = EVENT_OUTGOING
         last_sensor_state = new_sensor_state
 
-        # and now almost the same for the state of the player
         new_player_state = gapless_player.is_stopped()
         if last_player_state != new_player_state:
-            print "player_state changed: ", new_player_state
-            if new_player_state == True:
-                print "player_state finished: ", new_player_state
+            logger.info("player_state changed:  %s", new_player_state)
+            if new_player_state == False:
+                pass
+            else:
+                logger.info("player_state finished:  %s", new_player_state)
                 event = EVENT_FINISHED
         last_player_state = new_player_state
 
-        # state machine code starts here
-        # we first see if we are in the START state
         if state == STATE_START and event != EVENT_INCOMING:
             start_next_landscape()
             state = STATE_LANDSCAPE_RUNNING
         if not event:
-            # if there is no event to process, go back to the beginning of the loop
             continue
-        print "event: ", event
-        print "state: ", state
+        logger.debug("event:  %s", event)
+        logger.debug("state:  %s", state)
         # TODO: if person video is running, do not start next landscape video
         if state == STATE_LANDSCAPE_RUNNING:
             if event == EVENT_INCOMING:

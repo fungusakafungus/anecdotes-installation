@@ -31,8 +31,8 @@ def lurk():
                 current_time = time.time()
                 if current_time >= time_to_die:
                     logging.debug("lurk: killing old_process %s", old_process)
-                    #old_process.communicate(input='q')
-                    old_process.terminate()
+                    old_process.communicate(input='q')
+                    #old_process.terminate()
                     old_process = None
 
 
@@ -49,8 +49,8 @@ def play(videofile):
         else:
             logging.debug("play: killing old_process %s", old_process)
             try:
-                #old_process.communicate(input='q')
-                old_process.terminate()
+                old_process.communicate(input='q')
+                #old_process.terminate()
             except OSError:
                 logging.debug("could not kill old_process, already dead?")
         old_process = process

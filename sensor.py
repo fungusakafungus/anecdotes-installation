@@ -3,6 +3,9 @@ import sys
 import os
 from ConfigParser import ConfigParser
 import collections
+import logging
+
+logger = logging.getLogger("sensor")
 
 try:
     import RPi.GPIO as GPIO
@@ -15,31 +18,41 @@ except ImportError:
     print "looks like we are not running on a raspberry pi!"
 
 MY_PATH = os.path.dirname(__file__)
-config = ConfigParser()
-# we require config-default.ini to be there. open() will show an error otherwise
-config.readfp(open(MY_PATH + '/config-default.ini'))
-# config.ini may be absent
-config.read(MY_PATH + "/config.ini")
 
 OUTGOING = False
 INCOMING = True
-MIN_DISTANCE = config.getint("anecdotes", "min_distance")
-MAX_DISTANCE = config.getint("anecdotes", "max_distance")
-WINDOW_SIZE = 5
+WINDOW_SIZE = None
+distances = None
 
 last_state = OUTGOING
-distances = collections.deque(maxlen=WINDOW_SIZE)
+
+def read_config():
+    global MIN_DISTANCE, MAX_DISTANCE, WINDOW_SIZE, distances
+    config = ConfigParser()
+    config.readfp(open(MY_PATH + '/config-default.ini'))
+    config.read(MY_PATH + "/config.ini")
+    MIN_DISTANCE = config.getint("anecdotes", "min_distance")
+    MAX_DISTANCE = config.getint("anecdotes", "max_distance")
+    new_window_size = config.getint("anecdotes", "window_size")
+    if WINDOW_SIZE != new_window_size:
+        WINDOW_SIZE = new_window_size
+        distances = collections.deque(maxlen=WINDOW_SIZE)
+        
+    
 
 def state():
     global last_state
     if GPIO:
-        distance = ultrasonic.distance()
-        if not distance:
+        current_distance = ultrasonic.distance()
+        # the sensor can only measure up to 4 meters, so we skip too big values
+        if not current_distance or current_distance > 450:
             return last_state
-        distances.append(distance)
-        distance = sum(distances) / len(distances)
-        sys.stdout.write("\r%d" % int(distance))
-        sys.stdout.flush()
+        distances.append(current_distance)
+        l = sorted(list(distances))
+        index = int(len(l) / 2)
+        distance = l[index]
+        state_str = "P" if last_state else "L"
+        logger.info("distance: (%d/%d/%d) %s % 4.1f % 4.1f", MIN_DISTANCE, MAX_DISTANCE, WINDOW_SIZE, state_str, distance, current_distance)
         if last_state == INCOMING and distance > MAX_DISTANCE:
             last_state = OUTGOING
             return OUTGOING
@@ -55,3 +68,5 @@ def state():
                 return "incoming" in contents
         except:
             return False
+
+read_config()
