@@ -1,9 +1,10 @@
 #!/bin/bash
-#exec >/home/pi/log 2>/home/pi/log2
-#set -x
-#t=$(pgrep -fl "$0" | grep -v $$)
-#[ -n "$t" ] && exit
 
 cd /home/pi/show
 git pull &>/dev/null
-sudo ./show1.py &>/dev/null
+for i in `seq 10`
+do
+    sudo ./show1.py &>/dev/null
+    sleep 60
+done
+sudo reboot
