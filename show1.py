@@ -128,6 +128,8 @@ try:
                 state = STATE_LANDSCAPE_RUNNING
             else:
                 error()
-except KeyboardInterrupt:
+except Exception, e:
+    logger.exception(e)
+finally:
     ultrasonic.quit()
     gapless_player.quit()
