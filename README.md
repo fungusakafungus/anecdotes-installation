@@ -28,7 +28,8 @@ USEFUL INFORMATION
  - how to put videos on pies -> per ftp, pi@192.168....
   - maybe pure-ftpd? -> yepp, worked very good, just installed it: `pi@raspberrypi ~ $ sudo apt-get install pure-ftpd`
  - debugging information is sent to syslog_host with facility local0
-  - to configure syslog on a mac and to direct local0 facility to a file: `host:~ root# echo "local0.* /var/log/pi.log" >> /etc/syslog.conf`
+  - to configure syslog on a mac and to direct local0 facility to a file:
+  
     cd /System/Library/LaunchDaemons
     su
     /usr/libexec/PlistBuddy -c "add :Sockets:NetworkListener dict" com.apple.syslogd.plist
@@ -37,4 +38,5 @@ USEFUL INFORMATION
     echo "local0.* /var/log/pi.log" >> /etc/syslog.conf
     launchctl unload com.apple.syslogd.plist
     launchctl load com.apple.syslogd.plist
+    
   - to see log messages from pi on a mac do this in a terminal: `$ tail -f /var/log/pi.log`
