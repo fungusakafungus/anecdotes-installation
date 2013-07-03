@@ -22,15 +22,12 @@ Edit /etc/rc.local, add the following before `exit 0`
     setterm -blank force
 
 
-TODO
-----
+USEFUL INFORMATION
+------------------
 
  - how to put videos on pies -> per ftp, pi@192.168....
   - maybe pure-ftpd? -> yepp, worked very good, just installed it: `pi@raspberrypi ~ $ sudo apt-get install pure-ftpd`
- - how to make the show start on boot (write better `start` script)
- - how to configure distances? they may be different for different pies
-  - config file, editable via ftp or locally
- - do we need debugging information, and when, where to show it
-  - probably not, in the end it should just work!
- - we need black screen between videos, so we better do not start graphical environment
- - how to clone the sd cards
+ - debugging information is sent to syslog_host with facility local0
+  - to configure syslog on a mac, see http://stackoverflow.com/questions/5510563/how-to-start-syslogd-server-on-mac-to-accept-remote-logging-messages
+  - to direct local0 facility to a file: `host:~ root# echo "local0.* /var/log/pi.log" >> /etc/syslog.conf`
+  - to see log messages from pi on a mac do this in a terminal: `$ tail -f /var/log/pi.log`
