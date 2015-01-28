@@ -24,7 +24,8 @@ Edit /etc/rc.local, add the following before `exit 0`
 
 USEFUL INFORMATION
 ------------------
-
+ - ip address is static: 10.0.2.2
+ - ip configuration is in /etc/network/interfaces
  - how to put videos on pies -> per ftp, pi@192.168....
   - maybe pure-ftpd? -> yepp, worked very good, just installed it: `pi@raspberrypi ~ $ sudo apt-get install pure-ftpd`
  - debugging information is sent to syslog_host with facility local0
@@ -40,3 +41,30 @@ USEFUL INFORMATION
     launchctl load com.apple.syslogd.plist
     
   - to see log messages from pi on a mac do this in a terminal: `$ tail -f /var/log/pi.log`
+
+
+/etc/network/interfaces
+-----------------------
+```
+auto lo
+
+iface lo inet loopback
+#iface eth0 inet dhcp
+
+
+auto eth0
+	iface eth0 inet static
+	address 10.0.2.2
+	netmask 255.255.255.0
+	gateway 10.0.2.1
+
+
+
+
+allow-hotplug wlan0
+iface wlan0 inet manual
+wpa-roam /etc/wpa_supplicant/wpa_supplicant.conf
+iface default inet dhcp
+
+```
+
