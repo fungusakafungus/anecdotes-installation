@@ -49,6 +49,8 @@ initial_state = None
 
 def active():
     global got_initial_state, initial_state, activated
+    if activated:
+        return True
     if len(recent_states) == window_size:
         if not got_initial_state:
             initial_state = state()
