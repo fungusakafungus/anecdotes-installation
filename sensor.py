@@ -4,6 +4,7 @@ import os
 from ConfigParser import ConfigParser
 import collections
 import logging
+import button
 
 logger = logging.getLogger("sensor")
 
@@ -37,10 +38,14 @@ def read_config():
     if WINDOW_SIZE != new_window_size:
         WINDOW_SIZE = new_window_size
         distances = collections.deque(maxlen=WINDOW_SIZE)
-        
-    
+
+
 
 def state():
+    button.check()
+    if button.active():
+        return button.state()
+
     global last_state
     if GPIO:
         current_distance = ultrasonic.distance()
