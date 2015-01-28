@@ -30,16 +30,16 @@ USEFUL INFORMATION
   - maybe pure-ftpd? -> yepp, worked very good, just installed it: `pi@raspberrypi ~ $ sudo apt-get install pure-ftpd`
  - debugging information is sent to syslog_host with facility local0
   - to configure syslog on a mac and to direct local0 facility to a file:
-  
-    cd /System/Library/LaunchDaemons
-    su
-    /usr/libexec/PlistBuddy -c "add :Sockets:NetworkListener dict" com.apple.syslogd.plist
-    /usr/libexec/PlistBuddy -c "add :Sockets:NetworkListener:SockServiceName string syslog" com.apple.syslogd.plist
-    /usr/libexec/PlistBuddy -c "add :Sockets:NetworkListener:SockType string dgram" com.apple.syslogd.plist
-    echo "local0.* /var/log/pi.log" >> /etc/syslog.conf
-    launchctl unload com.apple.syslogd.plist
-    launchctl load com.apple.syslogd.plist
-    
+```
+cd /System/Library/LaunchDaemons
+su
+/usr/libexec/PlistBuddy -c "add :Sockets:NetworkListener dict" com.apple.syslogd.plist
+/usr/libexec/PlistBuddy -c "add :Sockets:NetworkListener:SockServiceName string syslog" com.apple.syslogd.plist
+/usr/libexec/PlistBuddy -c "add :Sockets:NetworkListener:SockType string dgram" com.apple.syslogd.plist
+echo "local0.* /var/log/pi.log" >> /etc/syslog.conf
+launchctl unload com.apple.syslogd.plist
+launchctl load com.apple.syslogd.plist
+```
   - to see log messages from pi on a mac do this in a terminal: `$ tail -f /var/log/pi.log`
 
 
